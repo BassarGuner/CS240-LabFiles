@@ -1,0 +1,51 @@
+(spike)
+core   0: 0x00010000 (0x100001b7) lui     gp, 0x10000
+(spike)
+core   0: 0x00010004 (0x0ff00293) li      t0, 255
+(spike)
+core   0: 0x00010008 (0x00528333) add     t1, t0, t0
+(spike)
+core   0: 0x0001000c (0x005303b3) add     t2, t1, t0
+(spike)
+core   0: 0x00010010 (0xf0238e13) addi    t3, t2, -254
+(spike)
+core   0: 0x00010014 (0x0051a023) sw      t0, 0(gp)
+(spike)
+core   0: 0x00010018 (0x0061a223) sw      t1, 4(gp)
+(spike)
+core   0: 0x0001001c (0x0071a423) sw      t2, 8(gp)
+(spike)
+core   0: 0x00010020 (0x01c1a623) sw      t3, 12(gp)
+(spike)
+core   0: 0x00010024 (0x0001ae83) lw      t4, 0(gp)
+(spike)
+core   0: 0x00010028 (0x0041af03) lw      t5, 4(gp)
+(spike)
+core   0: 0x0001002c (0x0081af83) lw      t6, 8(gp)
+(spike)
+core   0: 0x00010030 (0x00c1a203) lw      tp, 12(gp)
+(spike)
+core   0: 0x00010034 (0x01018193) addi    gp, gp, 16
+(spike)
+core   0: 0x00010038 (0x0051a023) sw      t0, 0(gp)
+(spike)
+core   0: 0x0001003c (0x00618223) sb      t1, 4(gp)
+(spike)
+core   0: 0x00010040 (0x00719423) sh      t2, 8(gp)
+(spike)
+core   0: 0x00010044 (0x01c1a623) sw      t3, 12(gp)
+(spike)
+core   0: 0x00010048 (0x01018193) addi    gp, gp, 16
+(spike)
+core   0: 0x0001004c (0xffc18603) lb      a2, -4(gp)
+(spike)
+core   0: 0x00010050 (0xff819683) lh      a3, -8(gp)
+(spike)
+core   0: 0x00010054 (0xff41c703) lbu     a4, -12(gp)
+(spike)
+core   0: 0x00010058 (0xff01d783) lhu     a5, -16(gp)
+(spike)
+core   0: 0x0001005c (0x05d00893) li      a7, 93
+(spike)
+core   0: 0x00010060 (0x00000073) ecall
+core   0: exception trap_user_ecall, epc 0x00010060
