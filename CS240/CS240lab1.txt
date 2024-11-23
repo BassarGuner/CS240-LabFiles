@@ -1,0 +1,116 @@
+Exercise 1
+
+
+Step1: I simply made a C program that finds the greatest common divisor of two numbers, a and b. I used the logic of remainder to find the solution of it.
+
+Step2: I compiled the program into RISC-V using the RISCV toolchain. It created executable file of named GCD that is suitable for RISCV architecture and i look into it afterwards that i will explain.
+
+Step3: After used the command cat on GCD the output was not humanly readable. There was a lot of @ and ^ that i could not interpret however there was some words at the end like _unlock__, __DATA_BEGIN____ etc. I think it was raw binary data for what i found on the internet when i searched it.
+
+Step4: When used file command on GCD the output was :GCD: ELF 32-bit LSB executable, UCB RISC-V, soft-float ABI, version 1 (SYSV), statically linked, with debug_info, not stripped. So it says that it is 32 bit executable file for RISCV architecture when it says ELF 32-bit LSB executable. It is a Linux executable(ELF) compiled for the UCB RISCV when it says UCB RISC-V. Its using software to handle floating point operations when it says soft-float ABI. All necessary are included in executable itself rather than dynamically linked when it says statically linked. Contains debug info and it is not stripped.
+
+Step5: The output was this: There is no dynamic section in this file. Since -d represents dynamic. But when i used -a instead -d. I get quite a thing. There were some instruction sets. For instance :   446: 00020a14  5092 FUNC    GLOBAL HIDDEN     1 __subtf3 , 465: 00023020   288 OBJECT  GLOBAL DEFAULT    6 _impure_data
+
+Step6: I disassambled the binary and there was assembly codes for RISCV architecture. So i could understand and interpret more about the code. There were some instructions sets. For instance : 100d8:	00040513          	mv	a0,s0  and 100dc:	4240c0ef          	jal	1c500 <_exit>. I can see that the codes are hexadecimal since there was f and d's in it. I extract the whole assembly to the obj.txt which is in the github.
+
+Step7: The error was : Error: cannot execute 32-bit program on RV64 hart. It happens because i did not say spike to arrange it on 32bit. There could be some different instruction representations for 64 bit or others. The whole set could be different. So it gives us error. But even i run it with spike --isa=rv32i GCD i get the error :Access exception occurred while loading payload GCD:
+Memory address 0x22c78 is invalid. So i think my comment was right about this. Also spike needs RISCV architecture operator. Spike is just processor simulator. Without correct environment it wont work.
+
+Step8: When i run it with pk it worked. Beceause pk acts like a basic operating system for RISCV architecture. It handles the system calls in spike.
+
+
+Exercise 2
+
+Step1: Content of assembly file was:         .file   "GCD.c"
+        .option nopic
+        .attribute arch, "rv32i2p1"
+        .attribute unaligned_access, 0
+        .attribute stack_align, 16
+        .text
+        .align  2
+        .globl  gcd
+        .type   gcd, @function
+gcd:
+        addi    sp,sp,-48
+        sw      ra,44(sp)
+        sw      s0,40(sp)
+        addi    s0,sp,48
+        sw      a0,-36(s0)
+        sw      a1,-40(s0)
+        j       .L2
+.L3:
+        lw      a5,-40(s0)
+        sw      a5,-20(s0)
+        lw      a5,-36(s0)
+        lw      a1,-40(s0)
+        mv      a0,a5
+        call    __modsi3
+        mv      a5,a0
+        sw      a5,-40(s0)
+        lw      a5,-20(s0)
+        sw      a5,-36(s0)
+.L2:
+        lw      a5,-40(s0)
+        bne     a5,zero,.L3
+        lw      a5,-36(s0)
+        mv      a0,a5
+        lw      ra,44(sp)
+        lw      s0,40(sp)
+        addi    sp,sp,48
+        jr      ra
+        .size   gcd, .-gcd
+        .section        .rodata
+        .align  2
+.LC0:
+        .string "The GCD of %d and %d is: %d\n"
+        .text
+        .align  2
+        .globl  main
+        .type   main, @function
+main:
+        addi    sp,sp,-32
+        sw      ra,28(sp)
+        sw      s0,24(sp)
+        addi    s0,sp,32
+        li      a5,20
+        sw      a5,-20(s0)
+        li      a5,40
+        sw      a5,-24(s0)
+        lw      a1,-24(s0)
+        lw      a0,-20(s0)
+        call    gcd
+        sw      a0,-28(s0)
+        lw      a3,-28(s0)
+        lw      a2,-24(s0)
+        lw      a1,-20(s0)
+        lui     a5,%hi(.LC0)
+        addi    a0,a5,%lo(.LC0)
+        call    printf
+        li      a5,0
+        mv      a0,a5
+        lw      ra,28(sp)
+        lw      s0,24(sp)
+        addi    sp,sp,32
+        jr      ra
+        .size   main, .-main
+        .globl  __modsi3
+        .ident  "GCC: (g04696df0963) 14.2.0"
+        .section        .note.GNU-stack,"",@progbits
+
+This is clearly understandable by humans and we can see the instructions clearly and the registers but there is no binary representation anywhere. It is RISCV architecture assembly file.
+
+Step2: I created object file. The cat command on that object file is : ELF  4(
+
+        #&#$ #.  #,  o '  #&   '   %      #,   '  #.   '     '      $ g  #.#,  @#&    #$   %  %    #"   &D &   %           $ g The GCD of %d and %d is: %d
+GCC: (g04696df0963) 14.2.0Aiscvrv32i2p1  #,hh1GCD.c$xrv32i2p1.LC0.L2.L3gcd__modsi3mainprintf    003L
+ 3  33  3.symtab.strtab.shstrtab.rela.text.data.bss.rodata.comment.note.GNU-stack.riscv.attributes 4   
+                                                                                                        &190!B=Rp=\
+        l84d
+
+So there are few things that i can understand like my printf's result like that. So since its an object file it is not executable because it does not know what should do with instructions yet. If i link object files and the libraries it will become executable than.
+
+Step3: Since i could not run any program in the pdf i just compile my C file using the compiler. But i understand the idea of doing this and i believe i explained.
+
+Step4: The output of my C file appeared in the UbuntuNew prompt correctly without an error or mistake. So the RISCV architecture compiled file read by spike in pk which is basic operating system.
+
+Step5: In debug mode i've seen the instruction codes for RISCV architecture. That was repreesented by hexadecimal and there were instructions  and registers that could have been seen clearly. For instance: core   0: 0x80000208 (0x00000193) li      gp, 0  and  core   0: 0x00001004 (0x02028593) addi    a1, t0, 32.
